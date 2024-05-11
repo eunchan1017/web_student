@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+					 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+	mapper가 root태그로 namespace속성을 가진다.
+	namespace속성 : 외부(javacode)mapper을 인식하는 id값 * 반드시 설정해야함. -->
+<mapper namespace="student">
+	<!-- 실행할 sql문 작성 
+		mapper에서 제공하는 태그를 이용
+		<select> : select문을 작성했을때 사용
+		<insert> : insert문을 작성했을때 사용
+		<update> : update문을 작성했을때 사용
+		<delete> : delete문을 작성했을때 사용
+		* 모든 태그에는 id속성을 반드시 설정 -> sql문을 지정하는 id값
+		paramecterType : 외부에서 전달받은 데이터에 대한 타입을 설정
+		select문의 결과를 매핑해주는 객체의 Type 설정할때
+		resultType :
+		resultMap : 
+	-->
+	<insert id="insertStudent">
+		INSERT INTO STUDENT VALUES(SEQ_STUDENT.NEXTVAL,'정은찬', '01012341234',
+		'teacher@teacher.com','경기도 안양시',SYSDATE)
+	</insert>
+	<insert id="insertStudentByName" parameterType="string">
+		<!-- 외부에서 전달된 값이 있는 경우 parameterType속성을 설정 -->
+		INSERT INTO STUDENT VALUES(SEQ_STUDENT.NEXTVAL,#{name}, '01012341234',
+		'teacher@teacher.com','경기도 안양시',SYSDATE)
+	</insert>
+	<!-- dao에서 두번째 파라미터는 전달했을때는 parmeterType="" 설정 
+		타입을 설정때에 클레스를 parameterType으로 작성할때는 패키지명.클래스명으로 작성해야함.
+		객체가 넘어왔을때에 값을 가져올떄 = #{필드명}
+	-->
+	<insert id="insertStudentAll" parameterType="com.mybatis.modal.vo.Student">
+		INSERT INTO STUDENT VALUES(SEQ_STUDENT.NEXTVAL,
+		#{studentName},#{studentPhone},#{studentAddress},#{studentEmail},SYSDATE)
+	</insert>
+	<!-- select문 사용하기
+		<select> 태그
+		속성
+		id
+		parameterType
+		resultSet의 데이터를 mapping해줄 타입을 선언
+		resultType : 맵핑할 클래스의 필드명이 컬럼명과 동일할때 
+		resultMap :
+		 -->
+		 <select id="selectStudentCount" resultType="_int">
+		 	
+		 </select>
+		 <!-- resultMap 선언하기
+				테이블 컬럼명과 클래스의 필드명이 다른때 매칭시켜주는 태그
+				id태그 -> pk컬럼에 대한 매칭을 할때 사용
+				result태그 -> 일반컴럼에 대한 매칭을 할때 사용
+				collection태그 -> has a관계에 있는 클래스를 매칭할때 -> List타입
+				association태그 -> has a관계에 있는 클래스를 매칭할때 ->일반클래스
+				 -->
+		 <resultMap type="com.mybatis.modal.vo.Student" id="studentMap">
+		 	<id column="student_no" property="studentNo"/>
+		 	<result column="student_name" property="studentName"/>
+		 	<result column="student_tel" property="studentTel"/>
+		 	<result column="student_email" property="studentEmail"/>
+		 	<result column="student_addr" property="studentAddr"/>
+		 	<result column="reg_date" property="enroll_date"/>
+		 </resultMap>
+		 <select id="selectStudentByNo" parameterType="_int" 
+		 resultMap="studentMap">
+		 <!-- resultType="com.mybatis.modal.vo.Student" -->
+		 	
+		 	SELECT * FROM STUDENT WHERE STUDENT_NO=#{no}
+		 	
+		 </select>
+</mapper>
